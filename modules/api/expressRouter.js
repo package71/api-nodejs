@@ -2,7 +2,7 @@ const express = require("express"), path = require("node:path"), qs = require("n
   API = require("../../modules/api").API, config = require("../../modules/config"),
   geoip = require("../../modules/geoip"), random = require("../../modules/random"), cookie = require('cookie'),
   error = require("../../modules/error/api"), axios = require("axios"),
-  cookieParser = require("cookie-parser"), UAParser = require("ua-parser-js"),
+  cookieParser = require("cookie-parser"),
   fileUpload = require("express-fileupload"), crypto = require("node:crypto");
 let git_status = {version: "1.2.0", commitHash: "#git"};
 router.use(["/_API", "/docs/_API"], express.static(path.normalize(__dirname + "/../../_API"))), router.use(cookieParser());
@@ -165,7 +165,7 @@ router.all("/config/docs/api/", (e, s) => {
         headers: e.headers,
         cookies: e.cookies,
         SetCookie: (key, val, opt) => SetCookie(s, key, val, opt),
-        agent: (new UAParser).setUA(e.headers["user-agent"]).getResult()
+        agent: {ua: e.headers["user-agent"]}
     };
     return e.params.method ? API.call(e.params.method, t, r, "http").then(e => e ? e.redirect ? s.redirect(302, e.redirect) : e : {
         error: error.create("API result of null", "api", {param: r}, 10),
